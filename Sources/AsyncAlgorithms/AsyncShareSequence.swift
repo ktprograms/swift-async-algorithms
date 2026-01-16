@@ -115,7 +115,7 @@ where Element: Sendable, Self: SendableMetatype, AsyncIterator: SendableMetatype
 // This type is typically not used directly; instead, use the `share()` method on any
 // async sequence that meets the sendability requirements.
 @available(AsyncAlgorithms 1.0, *)
-struct AsyncShareSequence<Base: AsyncSequence>: Sendable
+public struct AsyncShareSequence<Base: AsyncSequence>: Sendable
 where Base.Element: Sendable, Base: SendableMetatype, Base.AsyncIterator: SendableMetatype {
   // Represents a single consumer's connection to the shared sequence.
   //
@@ -699,25 +699,25 @@ where Base.Element: Sendable, Base: SendableMetatype, Base.AsyncIterator: Sendab
 
 @available(AsyncAlgorithms 1.0, *)
 extension AsyncShareSequence: AsyncSequence {
-  typealias Element = Base.Element
+  public typealias Element = Base.Element
 
-  struct Iterator: AsyncIteratorProtocol {
+  public struct Iterator: AsyncIteratorProtocol {
     let side: Side
 
     init(_ iteration: Iteration) {
       side = Side(iteration)
     }
 
-    mutating func next() async rethrows -> Element? {
+    mutating public func next() async rethrows -> Element? {
       try await side.next(isolation: nil)
     }
 
-    mutating func next(isolation actor: isolated (any Actor)?) async throws(Never) -> Element? {
+    mutating public func next(isolation actor: isolated (any Actor)?) async throws(Never) -> Element? {
       try await side.next(isolation: actor)
     }
   }
 
-  func makeAsyncIterator() -> Iterator {
+  public func makeAsyncIterator() -> Iterator {
     Iterator(extent.iteration)
   }
 }
