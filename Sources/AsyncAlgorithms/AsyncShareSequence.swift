@@ -67,7 +67,7 @@ where Element: Sendable, Self: SendableMetatype, AsyncIterator: SendableMetatype
   ///
   public func share(
     bufferingPolicy: AsyncBufferSequencePolicy = .bounded(1)
-  ) -> some AsyncSequence & Sendable {
+  ) -> AsyncShareSequence<Self> {
     // The iterator is transferred to the isolation of the iterating task
     // this has to be done "unsafely" since we cannot annotate the transfer
     // however since iterating an AsyncSequence types twice has been defined
