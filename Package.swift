@@ -28,8 +28,12 @@ let availabilityMacros: [SwiftSetting] = [
 
 let package = Package(
   name: "swift-async-algorithms",
+  platforms: [.iOS(.v13), .macOS(.v10_15)],
   products: [
     .library(name: "AsyncAlgorithms", targets: ["AsyncAlgorithms"])
+  ],
+  dependencies: [
+    .package(url: "https://github.com/swhitty/swift-mutex/", .upToNextMajor(from: "0.0.6")),
   ],
   targets: [
     .target(
@@ -37,6 +41,7 @@ let package = Package(
       dependencies: [
         .product(name: "OrderedCollections", package: "swift-collections"),
         .product(name: "DequeModule", package: "swift-collections"),
+        .product(name: "Mutex", package: "swift-mutex"),
       ],
       swiftSettings: availabilityMacros + [
         .enableExperimentalFeature("StrictConcurrency=complete")
@@ -44,7 +49,10 @@ let package = Package(
     ),
     .target(
       name: "AsyncSequenceValidation",
-      dependencies: ["_CAsyncSequenceValidationSupport", "AsyncAlgorithms"],
+      dependencies: [
+        "_CAsyncSequenceValidationSupport", "AsyncAlgorithms",
+        .product(name: "Mutex", package: "swift-mutex"),
+      ],
       swiftSettings: availabilityMacros + [
         .enableExperimentalFeature("StrictConcurrency=complete")
       ]
