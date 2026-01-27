@@ -341,14 +341,14 @@ where Base.Element: Sendable, Base: SendableMetatype, Base.AsyncIterator: Sendab
       }
     }
 
-    let state: Mutex<State>
+    let state: BPMutex<State>
     let limit: Int?
 
     init(
       _ iteratorFactory: @escaping @Sendable () -> sending Base.AsyncIterator,
       bufferingPolicy: AsyncBufferSequencePolicy
     ) {
-      state = Mutex(State(iteratorFactory, bufferingPolicy: bufferingPolicy))
+      state = BPMutex(State(iteratorFactory, bufferingPolicy: bufferingPolicy))
       switch bufferingPolicy.policy {
       case .bounded(let limit):
         self.limit = limit

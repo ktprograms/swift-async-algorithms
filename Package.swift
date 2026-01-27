@@ -33,7 +33,7 @@ let package = Package(
     .library(name: "AsyncAlgorithms", targets: ["AsyncAlgorithms"])
   ],
   dependencies: [
-    .package(url: "https://github.com/swhitty/swift-mutex/", .upToNextMajor(from: "0.0.6")),
+    .package(url: "https://github.com/ktprograms/swift-mutex/", revision: "9198dc87daeecf1f6e3dec7fbcbdf8541168d473"),
   ],
   targets: [
     .target(
