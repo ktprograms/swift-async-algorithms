@@ -154,6 +154,58 @@ internal struct Lock {
   }
 }
 
+public struct BPMutex<Value: ~Copyable>: ~Copyable, @unchecked Sendable {
+    let storage: BPStorage<Value>
+
+    public init(_ initialValue: consuming sending Value) {
+        self.storage = BPStorage(initialValue)
+    }
+
+    public borrowing func withLock<Result, E: Error>(
+        _ body: (inout sending Value) throws(E) -> sending Result
+    ) throws(E) -> sending Result {
+        storage.lock()
+        defer { storage.unlock() }
+        return try body(&storage.value)
+    }
+
+    public borrowing func withLockIfAvailable<Result, E: Error>(
+        _ body: (inout sending Value) throws(E) -> sending Result
+    ) throws(E) -> sending Result? {
+        guard storage.tryLock() else { return nil }
+        defer { storage.unlock() }
+        return try body(&storage.value)
+    }
+}
+
+final class BPStorage<Value: ~Copyable> {
+    private let _lock: os_unfair_lock_t
+    var value: Value
+
+    init(_ initialValue: consuming Value) {
+        self._lock = .allocate(capacity: 1)
+        self._lock.initialize(to: os_unfair_lock())
+        self.value = initialValue
+    }
+
+    func lock() {
+        os_unfair_lock_lock(_lock)
+    }
+
+    func unlock() {
+        os_unfair_lock_unlock(_lock)
+    }
+
+    func tryLock() -> Bool {
+        os_unfair_lock_trylock(_lock)
+    }
+
+    deinit {
+        self._lock.deinitialize(count: 1)
+        self._lock.deallocate()
+    }
+}
+
 struct ManagedCriticalState<State> {
   private final class LockedBuffer: ManagedBuffer<State, Lock.Primitive> {
     deinit {

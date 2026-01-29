@@ -11,7 +11,6 @@
 
 #if compiler(>=6.2)
 
-import Mutex
 import DequeModule
 
 @available(AsyncAlgorithms 1.0, *)

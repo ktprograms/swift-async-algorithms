@@ -32,16 +32,12 @@ let package = Package(
   products: [
     .library(name: "AsyncAlgorithms", targets: ["AsyncAlgorithms"])
   ],
-  dependencies: [
-    .package(url: "https://github.com/ktprograms/swift-mutex/", revision: "9198dc87daeecf1f6e3dec7fbcbdf8541168d473"),
-  ],
   targets: [
     .target(
       name: "AsyncAlgorithms",
       dependencies: [
         .product(name: "OrderedCollections", package: "swift-collections"),
         .product(name: "DequeModule", package: "swift-collections"),
-        .product(name: "Mutex", package: "swift-mutex"),
       ],
       swiftSettings: availabilityMacros + [
         .enableExperimentalFeature("StrictConcurrency=complete")
@@ -51,7 +47,6 @@ let package = Package(
       name: "AsyncSequenceValidation",
       dependencies: [
         "_CAsyncSequenceValidationSupport", "AsyncAlgorithms",
-        .product(name: "Mutex", package: "swift-mutex"),
       ],
       swiftSettings: availabilityMacros + [
         .enableExperimentalFeature("StrictConcurrency=complete")
